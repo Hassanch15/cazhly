@@ -15,7 +15,6 @@ schema.set('toJSON', {
     transform: function (doc, ret) {
         delete ret._id;
         ret.profile_image = config.baseUrl + ret.profile_image;
-        //console.log("user" + ret.toString());
     }
 });
 module.exports = mongoose.model('User', schema);

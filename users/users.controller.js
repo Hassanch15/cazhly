@@ -65,7 +65,7 @@ module.exports = router;
 }*/
 
 function register(req, res, next) {
-    fileIsValid(req, req.profile_image);
+    fileIsValid(req, req.files.profile_image);
     userService.create(req.body, req.files)
         .then(() => {
             res.status(200).json({"message": "account created"})

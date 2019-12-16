@@ -13,8 +13,7 @@ const upload = require('express-fileupload');
 app.use(express.static('./public'));
 //app.use(bodyParser.json());
 
-//handle error during api call
-app.use(errorHandler);
+
 
 //allow API access on Local Host
 app.use(cors());
@@ -47,6 +46,10 @@ app.use('/category', require('./categories/product_category.controller'));
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/public/index.html');
 });
+
+
+//handle error during api call
+app.use(errorHandler);
 
 // start server
 

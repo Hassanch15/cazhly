@@ -65,8 +65,8 @@ module.exports = router;
 }*/
 
 function register(req, res, next) {
-    if (!req.files)
-        fileIsValid(req, req.files.profile_image);
+    if (req.files)
+        fileIsValid(req.files.profile_image);
     userService.create(req.body, req.files)
         .then(() => {
             res.status(200).json({"message": "account created"})
@@ -99,7 +99,7 @@ function getById(req, res, next) {
 
 function update(req, res, next) {
     if (!req.files)
-        fileIsValid(req, req.files.profile_image)
+        fileIsValid(req.files.profile_image)
     userService.update(req.body.id, req.body, req.files)
         .then(() => res.json({"message": "account updated"}))
         .catch(err => next(err));

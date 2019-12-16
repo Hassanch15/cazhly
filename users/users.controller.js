@@ -97,7 +97,7 @@ function getById(req, res, next) {
 }
 
 function update(req, res, next) {
-    fileIsValid(req, req.profile_image)
+    fileIsValid(req, req.files.profile_image)
     userService.update(req.body.id, req.body, req.files)
         .then(() => res.json({"message": "account updated"}))
         .catch(err => next(err));

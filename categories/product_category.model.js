@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const config = require('config.json');
 const Schema = mongoose.Schema;
 const schema = new Schema({
     category_name: {type: String, required: true},
@@ -9,7 +10,7 @@ schema.set('toJSON', {
     transform: function (doc, ret) {
         ret.category_id = ret._id;
         delete ret._id;
-        ret.category_image = "localhost:3000" + ret.category_image;
+        ret.category_image = config.baseUrl + ret.category_image;
     }
 });
 module.exports = mongoose.model('ProductCategory', schema);

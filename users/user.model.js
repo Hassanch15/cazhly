@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const config = require('config');
 
 const schema = new Schema({
     uid: {type: String, unique: true, required: true},
@@ -13,7 +14,7 @@ schema.set('toJSON', {
     versionKey: false,// You should be aware of the outcome after set to false,
     transform: function (doc, ret) {
         delete ret._id;
-        ret.profile_image = "localhost:3000" + ret.profile_image;
+        ret.profile_image = config.baseUrl + ret.profile_image;
         //console.log("user" + ret.toString());
     }
 });

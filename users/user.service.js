@@ -70,7 +70,7 @@ async function update(id, userParam, file) {
         });
         fs.unlink("public/uploads/users/" + userParam.uid + ".jpeg", function (error) {
         });
-        url = "uploads/users/" + userParam.uid + extension;
+        url = "/uploads/users/" + userParam.uid + extension;
         userParam.profile_image = url;
     }
 

@@ -1,5 +1,4 @@
 function fileIsValid(reqFile) {
-    throw reqFile.mimetype;
     if (reqFile.mimetype != "image/jpeg" && reqFile.mimetype != "image/png") {
         throw "Only PNG/JPEG is supported";
     }

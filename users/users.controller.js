@@ -69,7 +69,10 @@ function getById(req, res, next) {
     if (!validateField(req.body.uid))
         throw "uid is required";
     userService.getById(req.body.uid)
-        .then(user => user ? res.json(user) : res.sendStatus(404))
+        .then(user => user ? res.json({
+            message: "user detail",
+            user_detail: user
+        }) : res.sendStatus(404))
         .catch(err => next(err));
 }
 

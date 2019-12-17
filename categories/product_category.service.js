@@ -5,6 +5,7 @@ const db = require('db_helper/db');
 const Category = db.Category;
 const path = require('path');
 const fs = require('fs');
+const {deleteFileIfExist} = require('util/FileUtils');
 module.exports = {
     getAllCategories,
     updateCategories,

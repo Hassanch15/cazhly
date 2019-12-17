@@ -42,7 +42,7 @@ function updateCategories(req, res, next) {
         }
     }
     if (!validateField(req.body.category_id)) {
-        throw "category is added";
+        throw "category_id  is required";
     }
     product_category_service.updateCategories(req.body, req.files)
         .then(() => res.json({message: "categories updated"}))

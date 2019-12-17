@@ -47,8 +47,6 @@ async function create(userParam, file) {
     await user.save();
     if (file !== null && file !== undefined)
         await profile_image.mv(fileName);
-
-
 }
 
 
@@ -62,12 +60,6 @@ async function update(userParam, file) {
         profile_image = file.profile_image;
         const extension = path.extname(profile_image.name);
         fileName = "public/uploads/users/" + userParam.uid + extension;
-        /*fs.unlink("public/uploads/users/" + userParam.uid + ".png", function (error) {
-        });
-        fs.unlink("public/uploads/users/" + userParam.uid + ".jpg", function (error) {
-        });
-        fs.unlink("public/uploads/users/" + userParam.uid + ".jpeg", function (error) {
-        });*/
         url = "/uploads/users/" + userParam.uid + extension;
         userParam.profile_image = url;
     }

@@ -20,18 +20,14 @@ function multiplefileIsValid(req, reqFiles) {
 
 
 function deleteFileIfExist(id) {
-    console.log(id);
     const glob = require('glob');
     const fs = require('fs');
-    glob("**/*" + id + ".*", null, function (er, files) {
-        if (files) {
-            files.forEach((file) => {
-                fs.unlink(file, function (error) {
-                });
-            });
+    const files = glob.sync("**/*" + id + ".*", null);
+    if (files) {
+        for (let i = 0; i < files.length; i++) {
+            fs.unlinkSync(files[i]);
         }
-        return;
-    });
+    }
 }
 
 

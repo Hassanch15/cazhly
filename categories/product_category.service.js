@@ -18,6 +18,7 @@ async function getAllCategories() {
 
 async function updateCategories(parameter, file) {
     category_id = parameter.category_id;
+    console.log("category_id", category_id);
     if (category_id === undefined || category_id === "")
         throw 'category id required';
     const category = await Category.findById(category_id);
@@ -28,19 +29,23 @@ async function updateCategories(parameter, file) {
         categories_image = file.category_image;
         const extension = path.extname(categories_image.name);
         fileName = "public/uploads/categories/" + category_id + extension;
+        console.log("delete start");
         deleteFileIfExist("uploads/categories/" + category_id);
-        url = "/uploads/categories/" + category_id + extension;
-        parameter.category_image = url;
+        console.log("delete end");
+        parameter.category_image = "/uploads/categories/" + category_id + extension;
     }
-
     console.log("after if");
     if (!category) throw 'Category not found';
     // copy userParam properties to user
     Object.assign(category, parameter);
     if (file !== null && file !== undefined) {
+        console.log("file upload");
+        console.log("file name", fileName);
+        console.log(categories_image);
+        console.log("move executed");
         await categories_image.mv(fileName);
+        await category.save();
     }
-    await category.save();
 }
 
 async function addNewCategory(postParam, files) {

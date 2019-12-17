@@ -12,8 +12,8 @@ function multiplefileIsValid(req, reqFiles) {
             }
         });
     } catch (e) {
-        fileIsValid(req, reqFiles)
-        req.files.item_images = []
+        fileIsValid(req, reqFiles);
+        req.files.item_images = [];
         req.files.item_images.push(reqFiles);
     }
 

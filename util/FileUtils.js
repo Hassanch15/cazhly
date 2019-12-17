@@ -16,7 +16,6 @@ function multiplefileIsValid(req, reqFiles) {
         req.files.item_images = [];
         req.files.item_images.push(reqFiles);
     }
-
 }
 
 

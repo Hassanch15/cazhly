@@ -19,8 +19,9 @@ module.exports = router;
 
 function addCategory(req, res, next) {
     if (validateField(req.files)) {
-        // throw req.files.category_image.mimetype;
-        fileIsValid(req, req.files.category_image);
+        if (req.files.category_image.mimetype != "image/jpeg" && req.files.category_image.mimetype != "image/png") {
+            throw "Only PNG/JPEG is supported";
+        }
     } else
         throw "image is required";
     product_category_service.addNewCategory(req.body, req.files)

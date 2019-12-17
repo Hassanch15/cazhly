@@ -27,12 +27,7 @@ async function updateCategories(parameter, file) {
         categories_image = file.category_image;
         const extension = path.extname(categories_image.name);
         fileName = "public/uploads/categories/" + category_id + extension;
-        fs.unlink("public/uploads/categories/" + category_id + ".png", function (error) {
-        });
-        fs.unlink("public/uploads/categories/" + category_id + ".jpg", function (error) {
-        });
-        fs.unlink("public/uploads/categories/" + category_id + ".jpeg", function (error) {
-        });
+        deleteFileIfExist("uploads/categories/" + category_id);
         url = "/uploads/categories/" + category_id + extension;
         parameter.category_image = url;
     }

@@ -36,7 +36,14 @@ function getAll(req, res, next) {
 }
 
 function updateCategories(req, res, next) {
-    fileIsValid(req, req.category_image);
+    if (validateField(req.files)) {
+        if (req.files.category_image.mimetype != "image/jpeg" && req.files.category_image.mimetype != "image/png") {
+            throw "Only PNG/JPEG is supported";
+        }
+    }
+    if (!validateField(req.body.category_id)) {
+        throw "category is added";
+    }
     product_category_service.updateCategories(req.body, req.files)
         .then(() => res.json({message: "categories updated"}))
         .catch(err => next(err));

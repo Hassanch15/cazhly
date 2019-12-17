@@ -14,7 +14,6 @@ const {validateField} = require('util/TextUtils');
 // routes
 router.post('/register', register);
 router.get('/all', verifyToken, getAll);
-router.get('/current', verifyToken, getCurrent);
 router.get('/user_detail', verifyToken, getById);
 router.put('/update', verifyToken, update);
 router.delete('/delete', verifyToken, _delete);
@@ -64,14 +63,11 @@ function getAll(req, res, next) {
         .catch(err => next(err));
 }
 
-function getCurrent(req, res, next) {
-    userService.getById(req.user.sub)
-        .then(user => user ? res.json(user) : res.sendStatus(404))
-        .catch(err => next(err));
-}
 
 function getById(req, res, next) {
     console.log(req.body);
+    if (!validateField(req.body.uid))
+        throw "uid is required";
     userService.getById(req.body.uid)
         .then(user => user ? res.json(user) : res.sendStatus(404))
         .catch(err => next(err));

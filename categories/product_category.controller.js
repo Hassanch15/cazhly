@@ -18,9 +18,10 @@ module.exports = router;
 
 
 function addCategory(req, res, next) {
-    if (!validateField(req.files)) {
+    if (validateField(req.files)) {
         fileIsValid(req, req.files.category_image);
-    }
+    } else
+        throw "image is required";
     product_category_service.addNewCategory(req.body, req.files)
         .then(() => res.json({"message": "Category added"}))
         .catch(err => next(err));

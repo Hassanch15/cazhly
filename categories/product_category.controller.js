@@ -19,7 +19,7 @@ module.exports = router;
 
 function addCategory(req, res, next) {
     if (validateField(req.files)) {
-        throw req.files.category_image.mimetype;
+        // throw req.files.category_image.mimetype;
         fileIsValid(req, req.files.category_image);
     } else
         throw "image is required";

@@ -78,7 +78,6 @@ function getById(req, res, next) {
 
 
 function update(req, res, next) {
-
     console.log(req.body);
     if (!validateField(req.body.uid))
         throw "Uid is required";

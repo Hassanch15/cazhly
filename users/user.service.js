@@ -6,7 +6,7 @@ const User = db.User;
 const {mongoose, ObjectId} = require('mongoose');
 const path = require('path');
 const fs = require('fs');
-
+const {deleteFileIfExist} = require('util/FileUtils');
 module.exports = {
     getAll,
     getById,
@@ -30,16 +30,13 @@ async function create(userParam, file) {
     // validate
     let profile_image;
     let fileName;
-    if (file !== null && file !== undefined) {
+    if (file && file !== null && file !== undefined) {
         profile_image = file.profile_image;
-        console.log(profile_image);
         const extension = path.extname(profile_image.name);
         fileName = "public/uploads/users/" + userParam.uid + extension;
         url = "/uploads/users/" + userParam.uid + extension;
         userParam.profile_image = url;
-
     }
-
     if (await User.findOne({email: userParam.email})) {
         console.log("email taken");
         throw 'Email "' + userParam.email + '" is already taken';
@@ -54,22 +51,23 @@ async function create(userParam, file) {
 
 }
 
-async function update(id, userParam, file) {
+
+async function update(userParam, file) {
 
     const user = await User.findOne({uid: userParam.uid});
-    console.log(user);
     let profile_image;
     let fileName;
+    deleteFileIfExist("uploads/users/" + userParam.uid);
     if (file !== null && file !== undefined) {
         profile_image = file.profile_image;
         const extension = path.extname(profile_image.name);
         fileName = "public/uploads/users/" + userParam.uid + extension;
-        fs.unlink("public/uploads/users/" + userParam.uid + ".png", function (error) {
+        /*fs.unlink("public/uploads/users/" + userParam.uid + ".png", function (error) {
         });
         fs.unlink("public/uploads/users/" + userParam.uid + ".jpg", function (error) {
         });
         fs.unlink("public/uploads/users/" + userParam.uid + ".jpeg", function (error) {
-        });
+        });*/
         url = "/uploads/users/" + userParam.uid + extension;
         userParam.profile_image = url;
     }

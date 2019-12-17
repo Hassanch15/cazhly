@@ -3,15 +3,16 @@ const router = express.Router();
 const productService = require('./product.service');
 const cors = require('cors');
 const multer = require('multer');
-const {fileIsValid, multiplefileIsValid} = require('util/FileUtils');
+const {multiplefileIsValid} = require('util/FileUtils');
+const {verifyToken} = require('util/AuthToken');
 
 
 //**************************************************
 // routes
-router.post('/create', create);
-router.get('/getPostedProduct', getPostedProductById);
-router.get('/getProductDetail/:id', getById);
-router.get('/getHomeProduct', getHomeProducts);
+router.post('/create', verifyToken, create);
+router.get('/getPostedProduct', verifyToken, getPostedProductById);
+router.get('/getProductDetail/:id', verifyToken, getById);
+router.get('/getHomeProduct', verifyToken, getHomeProducts);
 //**************************************************
 
 

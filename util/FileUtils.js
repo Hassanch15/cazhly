@@ -20,4 +20,20 @@ function multiplefileIsValid(req, reqFiles) {
 }
 
 
-module.exports = {fileIsValid, multiplefileIsValid};
+function deleteFileIfExist(id) {
+    console.log(id);
+    const glob = require('glob');
+    const fs = require('fs');
+    glob("**/*" + id + ".*", null, function (er, files) {
+        if (files) {
+            files.forEach((file) => {
+                fs.unlink(file, function (error) {
+                });
+            });
+        }
+        return;
+    });
+}
+
+
+module.exports = {fileIsValid, multiplefileIsValid, deleteFileIfExist};

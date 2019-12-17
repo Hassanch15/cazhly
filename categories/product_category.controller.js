@@ -4,13 +4,14 @@ const product_category_service = require('./product_category.service');
 const cors = require('cors');
 const multer = require('multer');
 const {fileIsValid} = require('util/FileUtils');
+const {verifyToken} = require('util/AuthToken');
 
 
 // routes
 // router.post('/uploadImage', uploadImage);
-router.post('/add', addCategory);
-router.put('/update', updateCategories);
-router.get('/all', getAll);
+router.post('/add', verifyToken, addCategory);
+router.put('/update', verifyToken, updateCategories);
+router.get('/all', verifyToken, getAll);
 
 module.exports = router;
 

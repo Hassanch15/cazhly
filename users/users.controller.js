@@ -23,8 +23,12 @@ module.exports = router;
 
 
 function register(req, res, next) {
-    if (req.files)
-        fileIsValid(req.files.profile_image);
+    if (req.files) {
+        if (req.files.profile_image.mimetype != "image/jpeg" && req.files.profile_image != "image/png") {
+            throw "Only PNG/JPEG is supported";
+        }
+    }
+
     userService.create(req.body, req.files)
         .then(() => {
             res.status(200).json({"message": "account created"})

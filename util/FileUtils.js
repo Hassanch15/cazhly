@@ -21,7 +21,6 @@ function multiplefileIsValid(req, reqFiles) {
     }
 }
 
-
 function deleteFileIfExist(id) {
     const glob = require('glob');
     const fs = require('fs');

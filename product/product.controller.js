@@ -5,15 +5,18 @@ const cors = require('cors');
 const multer = require('multer');
 const {multiplefileIsValid} = require('util/FileUtils');
 const {verifyToken} = require('util/AuthToken');
+const {validateField} = require('util/TextUtils');
 
 
 //**************************************************
 // routes
 router.get('/all', verifyToken, getAll);
 router.post('/create', verifyToken, create);
+router.put('/update', verifyToken, update);
 router.get('/getPostedProduct', verifyToken, getPostedProductById);
 router.get('/getProductDetail/:id', verifyToken, getById);
 router.get('/getHomeProduct', verifyToken, getHomeProducts);
+
 //**************************************************
 
 
@@ -34,12 +37,25 @@ function create(req, res, next)
         .catch(err => next(err));
 }
 
+//**************************************************
+function update(req, res, next)
+//**************************************************
+{
+    if (!validateField(req.body.product_id))
+        throw "product_id is required";
+    if (req.files)
+        multiplefileIsValid(req, req.files.item_images);
+    productService.updateProduct(req.body, req.files)
+        .then(() => res.json({"message": "Product added"}))
+        .catch(err => next(err));
+}
+
 
 //**************************************************
 function getAll(req, res, next)
 //**************************************************
 {
-    productService.getAllPost()
+    productService.getAllPost(req.body)
         .then(posts => res.json(posts))
         .catch(err => next(err));
 }

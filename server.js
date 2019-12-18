@@ -14,7 +14,6 @@ app.use(express.static('./public'));
 //app.use(bodyParser.json());
 
 
-
 //allow API access on Local Host
 app.use(cors());
 

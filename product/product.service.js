@@ -11,11 +11,26 @@ module.exports = {
     getNewsById,
     createNewsPost,
     getProdyctById,
-    getHomeProduct
+    getHomeProduct,
+    updateProduct
 };
 
-async function getAllPost() {
-    return await product.find().select('-hash');
+async function getAllPost(req) {
+
+    console.log(req);
+    const resPerPage = parseInt(req.item_per_page); // results per page
+    const page = parseInt(req.current_page) || 1; // Page
+    const filter = {};
+    if (validateField(req.maximum_sell_price)) {
+        filter.item_selling_price = {$lte: parseInt(req.maximum_sell_price)}
+    }
+    if (validateField(req.maximum_rent_price)) {
+        filter.item_rent_price = {$lte: parseInt(req.maximum_rent_price)}
+    }
+
+    return await product.find(filter)
+        .skip((resPerPage * page) - resPerPage)
+        .limit(resPerPage);
 }
 
 
@@ -86,6 +101,45 @@ async function createNewsPost(postParam, files) {
 
 }
 
+async function updateProduct(postParam, files) {
 
+
+    if (postParam.is_for_lend == 1
+        && (postParam.item_rent_price === undefined || postParam.item_rent_price === 0)) {
+        throw "please add rent price";
+    }
+    if (postParam.is_for_sell === 1
+        && (postParam.item_selling_price === undefined || postParam.item_selling_price === 0)) {
+        throw "please add selling price";
+    }
+    if (postParam.is_for_lend === true
+        && (postParam.item_rent_price === undefined || postParam.item_rent_price === 0)) {
+        throw "please add rent price";
+    }
+    console.log(postParam.product_id);
+    let newProduct = await product.findById(postParam.product_id);
+    if (!newProduct)
+        throw "Product not found";
+    const urlArray = [];
+    let itemImagesArray = files.item_images;
+    if (files !== null && files !== undefined) {
+        for (let i = 0; i < itemImagesArray.length; i++) {
+            console.log("loop started" + newProduct._id);
+            let item_image = itemImagesArray[i];
+            const extension = path.extname(item_image.name);
+            const fileName = "public/uploads/products/" + newProduct._id + "_" + i + extension;
+            let url = "/uploads/products/" + newProduct._id + "_" + i + extension;
+            urlArray.push(url);
+            await item_image.mv(fileName);
+        }
+        console.log(urlArray);
+        postParam.item_images = urlArray;
+        Object.assign(newProduct, postParam);
+        await newProduct.save();
+        return;
+    }
+    Object.assign(newProduct, postParam);
+    await newProduct.save();
+}
 
 

@@ -31,7 +31,9 @@ async function create(userParam, file) {
     let profile_image;
     let fileName;
     if (file && file !== null && file !== undefined) {
+
         profile_image = file.profile_image;
+        throw  profile_image.name;
         const extension = path.extname(profile_image.name);
         fileName = "public/uploads/users/" + userParam.uid + extension;
         url = "/uploads/users/" + userParam.uid + extension;

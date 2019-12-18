@@ -6,13 +6,13 @@ const Schema = mongoose.Schema;
 const schema = new Schema({
 //**************************************************
     item_name: {type: String, required: true},
-    item_selling_price: {type: Number},
+    item_selling_price: {type: Number, default: 0},
     user_id: {type: String, required: true},
-    item_rent_price: {type: String},
+    item_rent_price: {type: Number, default: 0},
     item_detail: {type: String, required: true},
     item_images: [{type: String, required: true}],
-    is_for_lend: {type: Boolean},
-    is_for_sell: {type: Boolean},
+    is_for_lend: {type: Number, default: 0},
+    is_for_sell: {type: Number, default: 0},
     category_id: {type: String, required: true},
     product_rating: {type: Number},
     createdDate: {type: Date, default: Date.now}

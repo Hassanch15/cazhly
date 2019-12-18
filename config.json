@@ -1,7 +1,7 @@
 ﻿{
     "connectionString" : "mongodb+srv://neighbout_developer:a1b2c3d4@trackercluster-4s3zq.gcp.mongodb.net/test?retryWrites=true&w=majority",
     "secret" : "THIS IS USED TO SIGN AND VERIFY JWT TOKENS, REPLACE IT WITH YOUR OWN SECRET, IT CAN BE ANY STRING",
-    "baseUrl" : "localhost:3000",
+    "baseUrl" : "https://neighbourapi.herokuapp.com/",
     "tokenExpiry" : "1h"
 }
 

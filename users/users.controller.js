@@ -24,7 +24,7 @@ module.exports = router;
 
 function register(req, res, next) {
     if (req.files) {
-        if (req.files.profile_image.mimetype != "image/jpeg" && req.files.profile_image != "image/png") {
+        if (req.files.profile_image.mimetype == "image/jpeg" || req.files.profile_image == "image/png") {
             throw "Only PNG/JPEG is supported" + req.files.profile_image.mimetype;
         }
     } else

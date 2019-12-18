@@ -6,7 +6,7 @@ function fileIsValid(reqFile) {
 
 function multiplefileIsValid(req, reqFiles) {
     try {
-        reqFiles.forEach((file) => {
+        req.files.forEach((file) => {
             if (file.mimetype != "image/jpeg" && file.mimetype != "image/png") {
                 throw "Only PNG/JPEG is supported";
             }

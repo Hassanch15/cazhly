@@ -27,7 +27,7 @@ schema.set('toJSON', {
         delete ret.id;
         const urlArray = ret.item_images;
         for (let i = 0; i < urlArray.length; i++) {
-            urlArray[i] = baseUrl + urlArray[i];
+            urlArray[i] = baseUrl + urlArray[i];p
         }
         ret.item_images = urlArray;
     }

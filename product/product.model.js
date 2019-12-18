@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const {baseUrl} = require('config');
 const Schema = mongoose.Schema;
 
 //**************************************************
@@ -23,7 +24,12 @@ schema.set('toJSON', {
 
     versionKey: false,// You should be aware of the outcome after set to false,
     transform: function (doc, ret) {
-        delete ret.id
+        delete ret.id;
+        const urlArray = ret.item_images;
+        for (let i = 0; i < urlArray.length; i++) {
+            urlArray[i] = baseUrl + urlArray[i];
+        }
+        ret.item_images = urlArray;
     }
 });
 

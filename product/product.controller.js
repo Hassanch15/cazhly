@@ -9,6 +9,7 @@ const {verifyToken} = require('util/AuthToken');
 
 //**************************************************
 // routes
+router.get('/all', verifyToken, getAll);
 router.post('/create', verifyToken, create);
 router.get('/getPostedProduct', verifyToken, getPostedProductById);
 router.get('/getProductDetail/:id', verifyToken, getById);

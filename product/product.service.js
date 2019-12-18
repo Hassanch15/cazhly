@@ -5,6 +5,7 @@ const db = require('db_helper/db');
 const category = db.Category;
 const product = db.Product;
 const path = require('path');
+const {validateField} = require('util/TextUtils');
 module.exports = {
     getAllPost,
     getNewsById,
@@ -47,8 +48,8 @@ async function getNewsById(id) {
 }
 
 async function createNewsPost(postParam, files) {
-    if ((postParam.is_for_sell === null || postParam.is_for_sell === 0) &&
-        (postParam.is_for_lend === null || postParam.is_for_lend === 0)) {
+    if ((!validateField(postParam.is_for_sell) || postParam.is_for_sell === 0) &&
+        (!validateField(postParam.is_for_lend) || postParam.is_for_lend === 0)) {
         throw "please select product is for lend or sell";
     }
     if (postParam.is_for_lend == 1
@@ -77,6 +78,7 @@ async function createNewsPost(postParam, files) {
             urlArray.push(url);
             await item_image.mv(fileName);
         }
+        console.log(urlArray);
         postParam.item_images = urlArray;
         Object.assign(newProduct, postParam);
         await newProduct.save();

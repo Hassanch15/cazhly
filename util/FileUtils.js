@@ -12,7 +12,10 @@ function multiplefileIsValid(req, reqFiles) {
             }
         });
     } catch (e) {
-        fileIsValid(req, reqFiles);
+        if (req.files.item_images.mimetype != "image/jpeg"
+            && req.files.item_images.mimetype != "image/png") {
+            throw "Only PNG/JPEG is supported";
+        }
         req.files.item_images = [];
         req.files.item_images.push(reqFiles);
     }

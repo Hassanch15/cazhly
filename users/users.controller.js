@@ -26,20 +26,18 @@ function register(req, res, next) {
     if (req.files) {
         if (req.files.profile_image.mimetype != "image/jpeg" && req.files.profile_image != "image/png") {
             throw "Only PNG/JPEG is supported";
-        } else {
-            throw "image found"
         }
     } else
-        throw "image not found";
+        throw "image is required";
 
-    /*userService.create(req.body, req.files)
+    userService.create(req.body, req.files)
         .then(() => {
             res.status(200).json({"message": "account created"})
         })
         .catch(err => {
             next(err);
             //res.status(500).json({"message": err.message});
-        });*/
+        });
 }
 
 function loginUser(req, res, next) {

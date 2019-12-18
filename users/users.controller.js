@@ -29,16 +29,17 @@ function register(req, res, next) {
         } else {
             throw "image found"
         }
-    }
+    } else
+        throw "image not found";
 
-    userService.create(req.body, req.files)
+    /*userService.create(req.body, req.files)
         .then(() => {
             res.status(200).json({"message": "account created"})
         })
         .catch(err => {
             next(err);
             //res.status(500).json({"message": err.message});
-        });
+        });*/
 }
 
 function loginUser(req, res, next) {

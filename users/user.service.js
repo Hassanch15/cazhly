@@ -34,8 +34,8 @@ async function create(userParam, file) {
 
         profile_image = file.profile_image;
         const extension = path.extname(profile_image.name);
-        fileName = "public/uploads/users/" + userParam.uid + "." + extension;
-        url = "/uploads/users/" + userParam.uid + "." + extension;
+        fileName = "public/uploads/users/" + userParam.uid + extension;
+        url = "/uploads/users/" + userParam.uid + extension;
         userParam.profile_image = url;
     }
     if (await User.findOne({email: userParam.email})) {

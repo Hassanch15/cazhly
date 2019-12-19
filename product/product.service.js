@@ -85,17 +85,22 @@ async function createNewsPost(postParam, files) {
             console.log("loop started" + newProduct._id);
             let item_image = itemImagesArray[i];
             const extension = path.extname(item_image.name);
-            const fileName = "public/uploads/products/" + newProduct._id + "_" + i + extension;
-            let url = "/uploads/products/" + newProduct._id + "_" + i + extension;
+            const randomId = getRandomString();
+            const fileName = "public/uploads/products/" + newProduct._id + "_" + randomId + extension;
+            let url = "/uploads/products/" + newProduct._id + "_" + randomId + extension;
             urlArray.push(url);
             await item_image.mv(fileName);
         }
-        console.log(urlArray);
         postParam.item_images = urlArray;
         Object.assign(newProduct, postParam);
         await newProduct.save();
     }
 
+}
+
+function getRandomString() {
+    const r = Math.random().toString(36).substring(7);
+    return r;
 }
 
 async function updateProduct(postParam, files) {
@@ -126,43 +131,45 @@ async function updateProduct(postParam, files) {
         if (imageSum > 3) {
             throw "already 3 images are added,delete one first";
         }
+    }
 
-        if (validateField(postParam.deleted_images)) {
-            const glob = require('glob');
-            const fs = require('fs');
-            const deletedImagesArray = postParam.deleted_images.split(",");
-            console.log(deletedImagesArray);
-            deletedImagesArray.forEach((file) => {
-                try {
-                    fs.unlinkSync("public" + file);
-                } catch (e) {
-                }
-            });
-        }
+    if (validateField(postParam.deleted_images)) {
+        const glob = require('glob');
+        const fs = require('fs');
+        const deletedImagesArray = postParam.deleted_images.split(",");
+        console.log(deletedImagesArray);
+        deletedImagesArray.forEach((file) => {
+            try {
+                fs.unlinkSync("public" + file);
+            } catch (e) {
+            }
+        });
     }
     if (!newProduct)
         throw "Product not found";
-    const urlArray = [];
-    let itemImagesArray = files.item_images;
+    let urlArray = [];
     if (validateField(files)) {
+        let itemImagesArray = files.item_images;
         for (let i = 0; i < itemImagesArray.length; i++) {
             console.log("loop started" + newProduct._id);
             let item_image = itemImagesArray[i];
             const extension = path.extname(item_image.name);
-            const fileName = "public/uploads/products/" + newProduct._id + "_" + imageSum + extension;
-            let url = "/uploads/products/" + newProduct._id + "_" + imageSum + extension;
+            const randomId = getRandomString();
+            const fileName = "public/uploads/products/" + newProduct._id + "_" + randomId + extension;
+            let url = "/uploads/products/" + newProduct._id + "_" + randomId + extension;
             urlArray.push(url);
             await item_image.mv(fileName);
-            imageSum++;
         }
-        console.log(urlArray);
-        postParam.item_images = urlArray;
-        Object.assign(newProduct, postParam);
-        await newProduct.save();
-        return;
-    }
-    postParam.item_images.push(newProduct.item_images);
 
+    }
+    const previousUrl = newProduct.item_images;
+    console.log("previous url" + previousUrl);
+    previousUrl.forEach((url) => {
+        const deletedImages = postParam.deleted_images;
+        if (!validateField(deletedImages) || deletedImages.indexOf(url) === -1)
+            urlArray.push(url);
+    });
+    postParam.item_images = urlArray;
     Object.assign(newProduct, postParam);
     await newProduct.save();
 }

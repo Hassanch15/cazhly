@@ -11,7 +11,6 @@ const {firebase, admin} = require('admin');
 const {tokenExpiry} = require('config');
 const {validate} = require('email-validator');
 
-
 //***************************************************************
 module.exports = {
     getAll,

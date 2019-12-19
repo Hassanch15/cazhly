@@ -7,12 +7,16 @@ const {mongoose, ObjectId} = require('mongoose');
 const path = require('path');
 const fs = require('fs');
 const {deleteFileIfExist} = require('util/FileUtils');
+const {validateField} = require('util/TextUtils');
+const {firebase, admin} = require('admin');
+const {tokenExpiry} = require('config');
 module.exports = {
     getAll,
     getById,
     create,
     update,
-    delete: _delete
+    delete: _delete,
+    login
 };
 
 async function getAll() {
@@ -30,8 +34,19 @@ async function create(userParam, file) {
     // validate
     let profile_image;
     let fileName;
+    //console.log(userParam);
+    if (!validateField(userParam.email)) {
+        throw "email is required";
+    }
+    if (!validateField(userParam.password)) {
+        throw "password is required";
+    }
+    const authUser = await admin.auth().createUser({
+        email: userParam.email,
+        password: userParam.password
+    });
+    userParam.uid = authUser.uid;
     if (file && file !== null && file !== undefined) {
-
         profile_image = file.profile_image;
         const extension = path.extname(profile_image.name);
         fileName = "public/uploads/users/" + userParam.uid + extension;
@@ -42,12 +57,29 @@ async function create(userParam, file) {
         console.log("email taken");
         throw 'Email "' + userParam.email + '" is already taken';
     }
-    const user = new User(userParam);
-    console.log(fileName);
-    console.log(profile_image);
+    user = new User(userParam);
+    console.log("user");
+//    console.log(fileName);
+    //  console.log(profile_image);
     await user.save();
     if (file !== null && file !== undefined)
         await profile_image.mv(fileName);
+}
+
+async function login(userParam) {
+    const email = userParam.email;
+    const password = userParam.password;
+    const user = {
+        email: email,
+        password: password
+    };
+    const firebaseUser = await firebase.auth().signInWithEmailAndPassword(email, password);
+    const userDetail = await User.findOne({uid: firebaseUser.user.uid});
+    const token = jwt.sign(user,
+        'secretKey',
+        {expiresIn: tokenExpiry});
+    return {message: "Login Successfull", token: token, user_detail: userDetail};
+
 }
 
 

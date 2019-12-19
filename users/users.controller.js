@@ -24,8 +24,10 @@ module.exports = router;
 
 function register(req, res, next) {
     if (req.files) {
-        if (req.files.profile_image.mimetype != "image/jpeg" && req.files.profile_image != "image/png") {
-            throw "Only PNG/JPEG is supported";
+        if (req.files.profile_image.mimetype != "image/jpeg"
+            && req.files.profile_image.mimetype != "image/png"
+            && req.files.profile_image.mimetype != "image/jpg") {
+            throw "Only PNG/JPEG is supported " + req.files.profile_image.mimetype + " jphg implemented";
         }
     } else
         throw "image is required";
@@ -34,7 +36,13 @@ function register(req, res, next) {
         .then(() => {
             res.status(200).json({"message": "account created"})
         })
-        .catch(err => {
+        .catch(async err => {
+            if (validateField(req.body.uid)) {
+                console.log("uid " + req.body.uid);
+                console.log("uid enter");
+                const {admin} = require('admin');
+                await admin.auth().deleteUser(req.body.uid);
+            }
             next(err);
             //res.status(500).json({"message": err.message});
         });
@@ -50,15 +58,15 @@ function loginUser(req, res, next) {
         error += "password required";
     if (error !== "")
         throw error;
-    const user = {
-        email: req.body.email
-    };
-    jwt.sign(user,
-        'secretKey',
-        {expiresIn: tokenExpiry},
-        (error, token) => {
-            res.json({message: "Login Successfull", token: token})
+    userService.login(req.body)
+        .then((userResponse) => {
+            res.status(200).json(userResponse)
+        })
+        .catch(err => {
+            next(err);
+            //res.status(500).json({"message": err.message});
         });
+
 }
 
 

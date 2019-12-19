@@ -1,28 +1,30 @@
 ﻿const express = require('express');
 const router = express.Router();
 const userService = require('./user.service');
-const cors = require('cors');
-const multer = require('multer');
-const expressFileUpload = require('express-fileupload');
 const {fileIsValid} = require('util/FileUtils');
-const jwt = require('jsonwebtoken');
 const {verifyToken} = require('util/AuthToken');
-const {tokenExpiry} = require('config');
 const {validateField} = require('util/TextUtils');
 
-
 // routes
+//***************************************************************
 router.post('/register', register);
 router.get('/all', verifyToken, getAll);
 router.get('/user_detail', verifyToken, getById);
 router.put('/update', verifyToken, update);
 router.delete('/delete', verifyToken, _delete);
-router.get('/login', loginUser);
+router.post('/login', loginUser);
+//***************************************************************
 
+
+//***************************************************************
 module.exports = router;
+//***************************************************************
 
 
-function register(req, res, next) {
+//***************************************************************
+function register(req, res, next)
+//***************************************************************
+{
     if (req.files) {
         if (req.files.profile_image.mimetype != "image/jpeg"
             && req.files.profile_image.mimetype != "image/png"
@@ -31,6 +33,7 @@ function register(req, res, next) {
         }
     } else
         throw "image is required";
+
 
     userService.create(req.body, req.files)
         .then(() => {
@@ -48,7 +51,10 @@ function register(req, res, next) {
         });
 }
 
-function loginUser(req, res, next) {
+//***************************************************************
+function loginUser(req, res, next)
+//***************************************************************
+{
     const email = req.body.email;
     const password = req.body.password;
     let error = "";
@@ -70,14 +76,20 @@ function loginUser(req, res, next) {
 }
 
 
-function getAll(req, res, next) {
+//***************************************************************
+function getAll(req, res, next)
+//***************************************************************
+{
     userService.getAll()
         .then(users => res.json({user_list: users}))
         .catch(err => next(err));
 }
 
 
-function getById(req, res, next) {
+//***************************************************************
+function getById(req, res, next)
+//***************************************************************
+{
     console.log(req.body);
     if (!validateField(req.body.uid))
         throw "uid is required";
@@ -90,7 +102,10 @@ function getById(req, res, next) {
 }
 
 
-function update(req, res, next) {
+//***************************************************************
+function update(req, res, next)
+//***************************************************************
+{
     console.log(req.body);
     if (!validateField(req.body.uid))
         throw "Uid is required";
@@ -101,7 +116,10 @@ function update(req, res, next) {
         .catch(err => next(err));
 }
 
-function _delete(req, res, next) {
+//***************************************************************
+function _delete(req, res, next)
+//***************************************************************
+{
     userService.delete(req.body.id)
         .then(() => res.json({"message": "User deleted"}))
         .catch(err => next(err));

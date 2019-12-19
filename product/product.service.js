@@ -63,22 +63,19 @@ async function getNewsById(id) {
 }
 
 async function createNewsPost(postParam, files) {
-    if ((!validateField(postParam.is_for_sell) || postParam.is_for_sell === 0) &&
-        (!validateField(postParam.is_for_lend) || postParam.is_for_lend === 0)) {
+    if ((!validateField(postParam.is_for_sell) || postParam.is_for_sell == 0) &&
+        (!validateField(postParam.is_for_lend) || postParam.is_for_lend == 0)) {
         throw "please select product is for lend or sell";
     }
     if (postParam.is_for_lend == 1
         && (postParam.item_rent_price === undefined || postParam.item_rent_price === 0)) {
         throw "please add rent price";
     }
-    if (postParam.is_for_sell === 1
+    if (postParam.is_for_sell == 1
         && (postParam.item_selling_price === undefined || postParam.item_selling_price === 0)) {
         throw "please add selling price";
     }
-    if (postParam.is_for_lend === true
-        && (postParam.item_rent_price === undefined || postParam.item_rent_price === 0)) {
-        throw "please add rent price";
-    }
+
     let newProduct = new product(postParam);
     await newProduct.save();
     const urlArray = [];
@@ -108,29 +105,55 @@ async function updateProduct(postParam, files) {
         && (postParam.item_rent_price === undefined || postParam.item_rent_price === 0)) {
         throw "please add rent price";
     }
-    if (postParam.is_for_sell === 1
+    if (postParam.is_for_sell == 1
         && (postParam.item_selling_price === undefined || postParam.item_selling_price === 0)) {
         throw "please add selling price";
     }
-    if (postParam.is_for_lend === true
-        && (postParam.item_rent_price === undefined || postParam.item_rent_price === 0)) {
-        throw "please add rent price";
-    }
+
     console.log(postParam.product_id);
     let newProduct = await product.findById(postParam.product_id);
+
+
+    let totalDeletedImages = 0;
+    let totalInsertedImages = validateField(files) ? files.item_images.length : 0;
+    if (validateField(postParam.deleted_images)) {
+        totalDeletedImages = postParam.deleted_images.split(",").length;
+    }
+    let imageSum;
+    if (validateField(files)) {
+        imageSum = newProduct.item_images.length - totalDeletedImages + totalInsertedImages;
+        console.log("image sum" + imageSum);
+        if (imageSum > 3) {
+            throw "already 3 images are added,delete one first";
+        }
+
+        if (validateField(postParam.deleted_images)) {
+            const glob = require('glob');
+            const fs = require('fs');
+            const deletedImagesArray = postParam.deleted_images.split(",");
+            console.log(deletedImagesArray);
+            deletedImagesArray.forEach((file) => {
+                try {
+                    fs.unlinkSync("public" + file);
+                } catch (e) {
+                }
+            });
+        }
+    }
     if (!newProduct)
         throw "Product not found";
     const urlArray = [];
     let itemImagesArray = files.item_images;
-    if (files !== null && files !== undefined) {
+    if (validateField(files)) {
         for (let i = 0; i < itemImagesArray.length; i++) {
             console.log("loop started" + newProduct._id);
             let item_image = itemImagesArray[i];
             const extension = path.extname(item_image.name);
-            const fileName = "public/uploads/products/" + newProduct._id + "_" + i + extension;
-            let url = "/uploads/products/" + newProduct._id + "_" + i + extension;
+            const fileName = "public/uploads/products/" + newProduct._id + "_" + imageSum + extension;
+            let url = "/uploads/products/" + newProduct._id + "_" + imageSum + extension;
             urlArray.push(url);
             await item_image.mv(fileName);
+            imageSum++;
         }
         console.log(urlArray);
         postParam.item_images = urlArray;
@@ -138,6 +161,8 @@ async function updateProduct(postParam, files) {
         await newProduct.save();
         return;
     }
+    postParam.item_images.push(newProduct.item_images);
+
     Object.assign(newProduct, postParam);
     await newProduct.save();
 }

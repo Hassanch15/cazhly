@@ -37,8 +37,11 @@ function getAll(req, res, next) {
 
 function updateCategories(req, res, next) {
     if (validateField(req.files)) {
-        if (req.files.category_image.mimetype != "image/jpeg" && req.files.category_image.mimetype != "image/png") {
-            throw "Only PNG/JPEG is supported";
+        if (req.files.category_image.mimetype != "image/jpeg"
+            && req.files.category_image.mimetype != "image/png"
+            && req.files.category_image.mimetype != "image/jpg"
+        ) {
+            throw "Only PNG/JPEG is supported " + req.files.category_image.mimetype;
         }
     }
     if (!validateField(req.body.category_id)) {

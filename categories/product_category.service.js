@@ -44,8 +44,8 @@ async function updateCategories(parameter, file) {
         console.log(categories_image);
         console.log("move executed");
         await categories_image.mv(fileName);
-        await category.save();
     }
+    await category.save();
 }
 
 async function addNewCategory(postParam, files) {

@@ -1,6 +1,5 @@
 ﻿const config = require('config.json');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
 const db = require('db_helper/db');
 const User = db.User;
 const {mongoose, ObjectId} = require('mongoose');
@@ -10,6 +9,10 @@ const {deleteFileIfExist} = require('util/FileUtils');
 const {validateField} = require('util/TextUtils');
 const {firebase, admin} = require('admin');
 const {tokenExpiry} = require('config');
+const {validate} = require('email-validator');
+
+
+//***************************************************************
 module.exports = {
     getAll,
     getById,
@@ -19,33 +22,47 @@ module.exports = {
     login
 };
 
-async function getAll() {
+//***************************************************************
+
+
+//***************************************************************
+async function getAll()
+//***************************************************************
+{
     return await User.find().select('-id');
 }
 
-async function getById(uid) {
+//***************************************************************
+async function getById(uid)
+//***************************************************************
+{
     const userDetail = await User.findOne({uid: uid}).select('-id');
     if (!userDetail)
         throw "user not found";
     return userDetail;
 }
 
-async function create(userParam, file) {
+
+//***************************************************************
+async function create(userParam, file)
+//***************************************************************
+{
     // validate
     let profile_image;
     let fileName;
-    //console.log(userParam);
     if (!validateField(userParam.email)) {
         throw "email is required";
     }
     if (!validateField(userParam.password)) {
         throw "password is required";
     }
-    const authUser = await admin.auth().createUser({
-        email: userParam.email,
-        password: userParam.password
+    if (!validate(userParam.email))
+        throw "email is not valid";
+    const authUser = await firebase.auth().createUserWithEmailAndPassword(userParam.email, userParam.password);
+    userParam.uid = authUser.user.uid;
+    firebase.auth().onAuthStateChanged(function (user) {
+        user.sendEmailVerification();
     });
-    userParam.uid = authUser.uid;
     if (file && file !== null && file !== undefined) {
         profile_image = file.profile_image;
         const extension = path.extname(profile_image.name);
@@ -59,14 +76,16 @@ async function create(userParam, file) {
     }
     user = new User(userParam);
     console.log("user");
-//    console.log(fileName);
-    //  console.log(profile_image);
     await user.save();
     if (file !== null && file !== undefined)
         await profile_image.mv(fileName);
 }
 
-async function login(userParam) {
+
+//***************************************************************
+async function login(userParam)
+//***************************************************************
+{
     const email = userParam.email;
     const password = userParam.password;
     const user = {
@@ -74,6 +93,10 @@ async function login(userParam) {
         password: password
     };
     const firebaseUser = await firebase.auth().signInWithEmailAndPassword(email, password);
+    if (!firebaseUser.user.emailVerified) {
+        throw "verify your email before login";
+    }
+
     const userDetail = await User.findOne({uid: firebaseUser.user.uid});
     const token = jwt.sign(user,
         'secretKey',
@@ -82,8 +105,10 @@ async function login(userParam) {
 
 }
 
-
-async function update(userParam, file) {
+//***************************************************************
+async function update(userParam, file)
+//***************************************************************
+{
 
     const user = await User.findOne({uid: userParam.uid});
     let profile_image;
@@ -109,7 +134,10 @@ async function update(userParam, file) {
         await profile_image.mv(fileName);
 }
 
-async function _delete(id) {
+//***************************************************************
+async function _delete(id)
+//***************************************************************
+{
     // console.log(await User.findById(id));
     if (id === undefined || id === "")
         throw 'Id required';

@@ -21,7 +21,6 @@ const schema = new Schema({
 //**************************************************
 schema.set('toJSON', {
 //**************************************************
-
     versionKey: false,// You should be aware of the outcome after set to false,
     transform: function (doc, ret) {
         delete ret.id;

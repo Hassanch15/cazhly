@@ -13,8 +13,6 @@ const schema = new Schema({
             throw new Error('Invalid Email')
         }
     } },
-    phone_number: {type: Number, required: true, trim: true},
-    created_date: {type: Date, default: Date.now},
     profile_image: {type: String, required: false}
 });
 //***************************************************************

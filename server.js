@@ -13,7 +13,6 @@ const upload = require('express-fileupload');
 app.use(express.static('./public'));
 //app.use(bodyParser.json());
 
-
 //allow API access on Local Host
 app.use(cors());
 
@@ -40,6 +39,10 @@ app.use('/product', require('./product/product.controller'));
 
 //category related operations  routes
 app.use('/category', require('./categories/product_category.controller'));
+
+//borrow related operations  routes
+app.use('/borrow_sell', require('./borrow_sell/borrow_sell.controller'));
+
 
 //if no routes define return render html file (index.hmtl
 app.get('/', function (req, res) {

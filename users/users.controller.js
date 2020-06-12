@@ -39,15 +39,14 @@ function register(req, res, next)
         .then(() => {
             res.status(200).json({"message": "account created"})
         })
-        .catch(async err => {
+        .catch( err => {
             if (validateField(req.body.uid)) {
                 console.log("uid " + req.body.uid);
                 console.log("uid enter");
-                const {admin} = require('admin');
-                await admin.auth().deleteUser(req.body.uid);
+                res.status(400).json({"error": err.message})
             }
             next(err);
-            //res.status(500).json({"message": err.message});
+            res.status(500).json({"message": err.message});
         });
 }
 
@@ -66,7 +65,7 @@ function loginUser(req, res, next)
         throw error;
     userService.login(req.body)
         .then((userResponse) => {
-            res.status(200).json(userResponse)
+            res.status(400).json(userResponse)
         })
         .catch(err => {
             next(err);

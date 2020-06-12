@@ -10,7 +10,6 @@ const {validateField} = require('util/TextUtils');
 const {firebase, admin} = require('admin');
 const {tokenExpiry} = require('config');
 const {validate} = require('email-validator');
-
 //***************************************************************
 module.exports = {
     getAll,
@@ -49,6 +48,8 @@ async function create(userParam, file)
     // validate
     let profile_image;
     let fileName;
+    const id = randomString(15)
+
     if (!validateField(userParam.email)) {
         throw "email is required";
     }
@@ -57,27 +58,31 @@ async function create(userParam, file)
     }
     if (!validate(userParam.email))
         throw "email is not valid";
-    const authUser = await firebase.auth().createUserWithEmailAndPassword(userParam.email, userParam.password);
-    userParam.uid = authUser.user.uid;
-    firebase.auth().onAuthStateChanged(function (user) {
-        user.sendEmailVerification();
-    });
+
+    userParam.uid = id
+    
+
     if (file && file !== null && file !== undefined) {
         profile_image = file.profile_image;
         const extension = path.extname(profile_image.name);
         fileName = "public/uploads/users/" + userParam.uid + extension;
         url = "/uploads/users/" + userParam.uid + extension;
         userParam.profile_image = url;
+        console.log('test1')
     }
     if (await User.findOne({email: userParam.email})) {
         console.log("email taken");
+        console.log('test2')
         throw 'Email "' + userParam.email + '" is already taken';
+        
     }
+    console.log(userParam);
     user = new User(userParam);
     console.log("user");
     await user.save();
     if (file !== null && file !== undefined)
-        await profile_image.mv(fileName);
+        {await profile_image.mv(fileName);
+            console.log('test3')}
 }
 
 
@@ -91,15 +96,18 @@ async function login(userParam)
         email: email,
         password: password
     };
-    const firebaseUser = await firebase.auth().signInWithEmailAndPassword(email, password);
-    if (!firebaseUser.user.emailVerified) {
-        throw "verify your email before login";
-    }
+    
 
-    const userDetail = await User.findOne({uid: firebaseUser.user.uid});
+    const userDetail = await User.findOne({uid: email,password:password});
+
+    if(userDetail===null)
+    {
+        return {message: "invalid email or password"};
+    }
     const token = jwt.sign(user,
         'secretKey',
         {expiresIn: tokenExpiry});
+
     return {message: "Login Successfull", token: token, user_detail: userDetail};
 
 }
@@ -145,4 +153,15 @@ async function _delete(id)
         throw 'User  not exist';
     }
     await User.findByIdAndRemove(id);
+}
+
+// Random String generator
+function randomString(len) {
+    charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var randomString = '';
+    for (var i = 0; i < len; i++) {
+        var randomPoz = Math.floor(Math.random() * charSet.length);
+        randomString += charSet.substring(randomPoz, randomPoz + 1);
+    }
+    return randomString;
 }

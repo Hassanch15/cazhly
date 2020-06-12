@@ -9,7 +9,7 @@
     },
     "scripts": {
         "start": "node ./server.js",
-        "start-dev": "nodemon ./server.js"
+        "dev": "nodemon src/index.js"
     },
     "dependencies": {
         "bcryptjs": "^2.4.3",
@@ -19,15 +19,18 @@
         "express": "^4.17.1",
         "express-fileupload": "^1.1.6",
         "express-jwt": "^5.3.1",
-        "firebase": "^7.6.1",
+        "firebase": "^7.15.1",
         "firebase-admin": "^8.8.0",
         "glob": "^7.1.6",
         "globe": "^0.3.1",
+        "grpc": "^1.24.3",
         "jsonwebtoken": "^8.5.1",
         "mongodb": "^3.2.7",
         "mongoose": "^5.6.9",
         "multer": "^1.4.2",
-        "rootpath": "^0.1.2"
+        "random-string": "^0.2.0",
+        "rootpath": "^0.1.2",
+        "validator": "^13.1.1"
     },
     "devDependencies": {
         "nodemon": "^1.19.1"

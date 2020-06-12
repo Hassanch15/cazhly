@@ -98,7 +98,7 @@ async function login(userParam)
     };
     
 
-    const userDetail = await User.findOne({uid: email,password:password});
+    const userDetail = await User.findOne({email: email, password:password});
 
     if(userDetail===null)
     {
@@ -155,7 +155,7 @@ async function _delete(id)
     await User.findByIdAndRemove(id);
 }
 
-// Random String generator
+// Random String
 function randomString(len) {
     charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     var randomString = '';

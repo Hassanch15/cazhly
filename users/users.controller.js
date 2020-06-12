@@ -37,13 +37,13 @@ function register(req, res, next)
 
     userService.create(req.body, req.files)
         .then(() => {
-            res.status(201).json({"message": "account created"})
+            res.status(200).json({"message": "account created"})
         })
         .catch( err => {
             if (validateField(req.body.uid)) {
                 console.log("uid " + req.body.uid);
                 console.log("uid enter");
-                res.status(400).json({"error": err.message})
+                res.status(400).json({"error": err})
             }
             next(err);
             res.status(500).json({"message": err.message});
@@ -65,11 +65,11 @@ function loginUser(req, res, next)
         throw error;
     userService.login(req.body)
         .then((userResponse) => {
-            res.status(202).json(userResponse)
+            res.status(201).json(userResponse)
         })
         .catch(err => {
             next(err);
-            res.status(401).json({"message": err.message});
+            res.status(500).json({"message": err});
         });
 
 }

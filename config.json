@@ -1,7 +1,7 @@
 ﻿{
-    "connectionString" : "mongodb://127.0.0.1:27017/NeighbourAPI",
+    "connectionString" : "mongodb+srv://hassan:abc12345@cluster0-7ucen.mongodb.net/testapi-fantech?retryWrites=true&w=majority",
     "secret" : "THIS IS USED TO SIGN AND VERIFY JWT TOKENS, REPLACE IT WITH YOUR OWN SECRET, IT CAN BE ANY STRING",
-    "baseUrl" : "",
+    "baseUrl" : "https://testapi-fantech.herokuapp.com",
     "tokenExpiry" : "1h"
 }
 

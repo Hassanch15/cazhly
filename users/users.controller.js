@@ -36,13 +36,16 @@ function register(req, res, next)
 
 
     userService.create(req.body, req.files)
-        .then(() => {
-            res.status(200).json({"message": "account created"})
+        .then((user) => {
+            res.status(200).json({"message": "account created",user})
         })
         .catch( err => {
             if (validateField(req.body.uid)) {
-                console.log("uid " + req.body.uid);
-                console.log("uid enter");
+                if(req.body.password.length < 8){
+                    res.status(400).json({"error": "Required password minimum length is 8" } )
+                    return 
+                }
+                
                 res.status(400).json({"error": err})
             }
             next(err);
@@ -65,11 +68,15 @@ function loginUser(req, res, next)
         throw error;
     userService.login(req.body)
         .then((userResponse) => {
-            res.status(201).json(userResponse)
+
+            if(userResponse===false){
+                return res.status(401).json({"Error": "Invalid Email or Password"})
+            }
+            res.status(200).json(userResponse)
         })
         .catch(err => {
             next(err);
-            res.status(500).json({"message": err});
+            res.status(500).json({"message": err.message});
         });
 
 }

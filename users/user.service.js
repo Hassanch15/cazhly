@@ -10,6 +10,7 @@ const {validateField} = require('util/TextUtils');
 const {firebase, admin} = require('admin');
 const {tokenExpiry} = require('config');
 const {validate} = require('email-validator');
+const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/;
 //***************************************************************
 module.exports = {
     getAll,
@@ -56,8 +57,8 @@ async function create(userParam, file)
     if (!validateField(userParam.password)) {
         throw "password is required";
     }
-    if (!validate(userParam.email))
-        throw "email is not valid";
+    if (!mailformat.test(userParam.email))
+        throw "Invalid Email Format!";
 
     userParam.uid = id
     
@@ -76,13 +77,15 @@ async function create(userParam, file)
         throw 'Email "' + userParam.email + '" is already taken';
         
     }
-    console.log(userParam);
+
     user = new User(userParam);
     console.log("user");
     await user.save();
     if (file !== null && file !== undefined)
         {await profile_image.mv(fileName);
             console.log('test3')}
+
+            return user
 }
 
 
@@ -95,15 +98,14 @@ async function login(userParam)
     const user = {
         email: email,
         password: password
-    };
-    
+    }
 
     const userDetail = await User.findOne({email: email, password:password});
 
-    if(userDetail===null)
-    {
-        return {message: "invalid email or password"};
+    if(userDetail === null){
+        return false
     }
+
     const token = jwt.sign(user,
         'secretKey',
         {expiresIn: tokenExpiry});

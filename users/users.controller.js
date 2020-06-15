@@ -37,7 +37,7 @@ function register(req, res, next)
 
     userService.create(req.body, req.files)
         .then((user) => {
-            res.status(200).json({"message": "account created",user})
+            res.status(201).json({"message": "account created",user})
         })
         .catch( err => {
             if (validateField(req.body.uid)) {

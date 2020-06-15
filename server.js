@@ -45,9 +45,7 @@ app.use('/borrow_sell', require('./borrow_sell/borrow_sell.controller'));
 
 
 //if no routes define return render html file (index.hmtl
-app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/user/register');
-});
+app.get('/', require('./users/users.controller'));
 
 
 //handle error during api call

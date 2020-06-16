@@ -22,7 +22,7 @@ app.use(express.static('./public'));
 //use cookie sessions
 app.use( cookieSession({
     maxAge: 30 * 24 * 60 * 60 * 1000,
-    keys: [keys.cookieKey || process.env.COOKIE_KEY],
+    keys: [process.env.COOKIE_KEY || keys.cookieKey ],
     sameSite: 'none'
 }))
 

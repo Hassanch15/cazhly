@@ -2,15 +2,22 @@
 const jwt = require('jsonwebtoken');
 const db = require('db_helper/db');
 const User = db.User;
-const {mongoose, ObjectId} = require('mongoose');
+const OauhtUser = db.OauhtUser
+const { mongoose, ObjectId } = require('mongoose');
 const path = require('path');
 const fs = require('fs');
-const {deleteFileIfExist} = require('util/FileUtils');
-const {validateField} = require('util/TextUtils');
-const {firebase, admin} = require('admin');
-const {tokenExpiry} = require('config');
-const {validate} = require('email-validator');
+const { deleteFileIfExist } = require('util/FileUtils');
+const { validateField } = require('util/TextUtils');
+const { firebase, admin } = require('admin');
+const { tokenExpiry } = require('config');
+const { validate } = require('email-validator');
 const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/;
+
+// Google oauth2.0 with passportjs
+const passport = require('passport')
+const GoogleStrategy = require('passport-google-oauth20').Strategy
+const clientIds = require('../config.json')
+
 //***************************************************************
 module.exports = {
     getAll,
@@ -35,7 +42,7 @@ async function getAll()
 async function getById(uid)
 //***************************************************************
 {
-    const userDetail = await User.findOne({uid: uid}).select('-id');
+    const userDetail = await User.findOne({ uid: uid }).select('-id');
     if (!userDetail)
         throw "user not found";
     return userDetail;
@@ -61,7 +68,7 @@ async function create(userParam, file)
         throw "Invalid Email Format!";
 
     userParam.uid = id
-    
+
 
     if (file && file !== null && file !== undefined) {
         profile_image = file.profile_image;
@@ -71,21 +78,22 @@ async function create(userParam, file)
         userParam.profile_image = url;
         console.log('test1')
     }
-    if (await User.findOne({email: userParam.email})) {
+    if (await User.findOne({ email: userParam.email })) {
         console.log("email taken");
         console.log('test2')
         throw 'Email "' + userParam.email + '" is already taken';
-        
+
     }
 
     user = new User(userParam);
     console.log("user");
     await user.save();
-    if (file !== null && file !== undefined)
-        {await profile_image.mv(fileName);
-            console.log('test3')}
+    if (file !== null && file !== undefined) {
+        await profile_image.mv(fileName);
+        console.log('test3')
+    }
 
-            return user
+    return user
 }
 
 
@@ -100,17 +108,17 @@ async function login(userParam)
         password: password
     }
 
-    const userDetail = await User.findOne({email: email, password:password});
+    const userDetail = await User.findOne({ email: email, password: password });
 
-    if(userDetail === null){
+    if (userDetail === null) {
         return false
     }
 
     const token = jwt.sign(user,
         'secretKey',
-        {expiresIn: tokenExpiry});
+        { expiresIn: tokenExpiry });
 
-    return {message: "Login Successfull", token: token, user_detail: userDetail};
+    return { message: "Login Successfull", token: token, user_detail: userDetail };
 
 }
 
@@ -119,7 +127,7 @@ async function update(userParam, file)
 //***************************************************************
 {
 
-    const user = await User.findOne({uid: userParam.uid});
+    const user = await User.findOne({ uid: userParam.uid });
     let profile_image;
     let fileName;
     deleteFileIfExist("uploads/users/" + userParam.uid);
@@ -133,7 +141,7 @@ async function update(userParam, file)
 
     // validate
     if (!user) throw 'User not found';
-    if (user.username !== userParam.username && await User.findOne({username: userParam.username})) {
+    if (user.username !== userParam.username && await User.findOne({ username: userParam.username })) {
         throw 'Email "' + userParam.username + '" is already taken';
     }
     // copy userParam properties to user
@@ -167,3 +175,44 @@ function randomString(len) {
     }
     return randomString;
 }
+
+// Google Oauth2.0
+passport.serializeUser((user,done) => {
+    done(null, user.id)
+})
+
+passport.deserializeUser(async (id, done) => {
+    const user = await User.findById(id)
+    done(null, user)
+})
+
+passport.use(new GoogleStrategy({
+    clientID: clientIds.clientID,
+    clientSecret: clientIds.clientSecret,
+    callbackURL: "/auth/google/callback"
+},
+    (accessToken, refreshToken, profile, done) => {
+        
+        OauhtUser.findOne({uid:profile.id}).then((user) => {
+            if(user){
+                return done(null, user)
+            }
+
+            user = new OauhtUser({
+                uid: profile.id,
+                username: profile.displayName,
+                email: profile.emails[0].value,
+                profile_image: profile.photos[0].value
+            })
+
+            user.save()
+            return done(null, user)
+
+        })
+
+        console.log(profile.photos[0].value)
+        console.log(profile.id)
+        console.log(profile.displayName)
+        console.log(profile.emails[0].value)
+    }
+))

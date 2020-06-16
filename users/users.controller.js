@@ -9,7 +9,7 @@ const {validateField} = require('util/TextUtils');
 //***************************************************************
 router.post('/register', register);
 router.get('/all', verifyToken, getAll);
-router.get('/user_detail', verifyToken, getById);
+router.get('/data', verifyToken, getById);
 router.put('/update', verifyToken, update);
 router.delete('/delete', verifyToken, _delete);
 router.post('/login', loginUser);

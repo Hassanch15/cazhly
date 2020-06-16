@@ -8,16 +8,31 @@ const errorHandler = require('db_helper/error-handler');
 const fs = require('fs');
 const path = require('path');
 const upload = require('express-fileupload');
+const passport = require('passport')
+const cookieSession = require('cookie-session')
+const keys = require('./config.json');
+const { RequesterBuilder } = require('grpc');
+require('./users/oauth-user.model')
+require('./users/user.service')
 
 //use to render static content like (html/images/files etc) .these files should be in public folder
 app.use(express.static('./public'));
 //app.use(bodyParser.json());
 
+//use cookie sessions
+app.use( cookieSession({
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+    keys: [keys.cookieKey || process.env.COOKIE_KEY],
+    sameSite: 'none'
+}))
+
+app.use(passport.initialize())
+app.use(passport.session())
+
 //allow API access on Local Host
 app.use(cors());
 
 //use to render static content like (html/images/files etc) .these files should be in public folder
-
 app.use(express.static(path.join(__dirname, 'public')));
 
 //middle ware for file uploading (express-file-upload)
@@ -49,6 +64,20 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + '/public/index.html');
 });
 
+//Google Authenticate
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email']}) )
+app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }),
+function(req, res) {
+  res.redirect('/');
+})
+
+app.get('/current_user', (req,res) =>{
+    res.send(req.isAuthenticated())
+})
+app.get('/api/logout', (req,res) => {
+    req.logOut()
+    res.send(req.body)
+})
 
 //handle error during api call
 app.use(errorHandler);

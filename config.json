@@ -2,6 +2,9 @@
     "connectionString" : "mongodb+srv://hassan:abc12345@cluster0-7ucen.mongodb.net/testapi-fantech?retryWrites=true&w=majority",
     "secret" : "THIS IS USED TO SIGN AND VERIFY JWT TOKENS, REPLACE IT WITH YOUR OWN SECRET, IT CAN BE ANY STRING",
     "baseUrl" : "https://testapi-fantech.herokuapp.com",
-    "tokenExpiry" : "1h"
+    "tokenExpiry" : "1h",
+    "clientID": "63445494867-nj7af6n1mr5ggum3bcq77j0flrs48v14.apps.googleusercontent.com",
+    "clientSecret":"yFFMuVsIovzsqZnXoiKwrZQO",
+    "cookieKey": "abcapnakamkaryaarxyz"
 }
 

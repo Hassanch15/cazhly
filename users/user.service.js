@@ -13,10 +13,15 @@ const { tokenExpiry } = require('config');
 const { validate } = require('email-validator');
 const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/;
 
-// Google oauth2.0 with passportjs
+//Passport and keys
 const passport = require('passport')
-const GoogleStrategy = require('passport-google-oauth20').Strategy
 const clientIds = require('../config.json')
+
+// Google oauth2.0 with passportjs
+const GoogleStrategy = require('passport-google-oauth20').Strategy
+
+//Facebook login strategy
+const FacebookStrategy = require('passport-facebook').Strategy
 
 //***************************************************************
 module.exports = {
@@ -176,25 +181,25 @@ function randomString(len) {
     return randomString;
 }
 
+//Serializa and deserialize passport
+passport.serializeUser(function (user, done) {
+    done(null, user);
+});
+
+passport.deserializeUser(function (obj, done) {
+    done(null, obj);
+});
+
 // Google Oauth2.0
-passport.serializeUser((user,done) => {
-    done(null, user.id)
-})
-
-passport.deserializeUser(async (id, done) => {
-    const user = await User.findById(id)
-    done(null, user)
-})
-
 passport.use(new GoogleStrategy({
-    clientID: clientIds.clientID,
-    clientSecret: clientIds.clientSecret,
+    clientID: clientIds.auth.googleAuth.clientID,
+    clientSecret: clientIds.auth.googleAuth.clientSecret,
     callbackURL: "/auth/google/callback"
 },
     (accessToken, refreshToken, profile, done) => {
-        
-        OauhtUser.findOne({uid:profile.id}).then((user) => {
-            if(user){
+
+        OauhtUser.findOne({ uid: profile.id }).then((user) => {
+            if (user) {
                 return done(null, user)
             }
 
@@ -214,5 +219,18 @@ passport.use(new GoogleStrategy({
         console.log(profile.id)
         console.log(profile.displayName)
         console.log(profile.emails[0].value)
+    }
+))
+
+//Facebook login auth
+passport.use(new FacebookStrategy(
+    {
+        clientID: clientIds.auth.facebookAuth.clientID,
+        clientSecret: clientIds.auth.facebookAuth.clientSecret,
+        callbackURL: "http://localhost:3000/auth/facebook/callback/",
+        profileFields: ['gender']
+    }, 
+    (accessToken, refreshToken, profile, done) => {
+        console.log(profile)
     }
 ))

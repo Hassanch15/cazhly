@@ -16,13 +16,13 @@ require('./users/oauth-user.model')
 require('./users/user.service')
 
 //use to render static content like (html/images/files etc) .these files should be in public folder
-app.use(express.static('./public'));
-//app.use(bodyParser.json());
+
+app.use(bodyParser.json())
 
 //use cookie sessions
-app.use( cookieSession({
+app.use(cookieSession({
     maxAge: 30 * 24 * 60 * 60 * 1000,
-    keys: [process.env.COOKIE_KEY || keys.cookieKey ],
+    keys: [process.env.COOKIE_KEY || keys.cookieKey],
     sameSite: 'none'
 }))
 
@@ -34,12 +34,13 @@ app.use(cors());
 
 //use to render static content like (html/images/files etc) .these files should be in public folder
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('./public'))
 
 //middle ware for file uploading (express-file-upload)
 app.use(upload());
 
 //middle use to parse url parameter into body parameter
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // use JWT auth to secure the api
 //app.use(jwt());
@@ -64,19 +65,27 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + '/public/index.html');
 });
 
-//Google Authenticate
-app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email']}) )
-app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }),
-function(req, res) {
-  res.redirect('/');
-})
+//Google Authenticate router  ***************
+app.get('/auth/google', passport.authenticate('google', { scope: ['email'] }))
+app.get('/auth/google/callback',
+    passport.authenticate('google',
+        {
+            successRedirect: "/",
+            failureRedirect: '/fail'
+        }))
 
-app.get('/current_user', (req,res) =>{
-    res.send(req.isAuthenticated())
-})
-app.get('/api/logout', (req,res) => {
-    req.logOut()
-    res.send(req.body)
+//Facebook auth routes ***************
+app.get('/auth/facebook', passport.authenticate('facebook', { scope : ['email'] }))
+app.get(
+    '/auth/facebook/callback',
+    passport.authenticate('facebook',
+        {
+            successRedirect: '/',
+            failureRedirect: '/fail'
+        })
+)
+app.get('/fail', (req, res) => {
+    res.send("Failed attempt");
 })
 
 //handle error during api call

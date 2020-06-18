@@ -1,5 +1,8 @@
 const DataPerDayModel = require('./data-per-day.model')
 
+//***************** Services ******************
+
+//fetch all the data from db
 const getData = async (date) => {
     const givenDate = new Date(date)
     const data = await DataPerDayModel.find({ date: givenDate })
@@ -28,6 +31,29 @@ const getData = async (date) => {
     return newData
 }
 
+//fetch all the data between given dates from db
+const getBetweenData = async (firstDate, lastDate) => {
+
+   const date1 = new Date(firstDate)
+   const date2 = new Date(lastDate) 
+   const dataArray = []
+   const dataDb = await DataPerDayModel.find()
+
+
+   dataDb.forEach(data => {
+       if( date1 < data.date && date2 > data.date){
+           dataArray.push(data)
+       }
+
+   })
+
+   return dataArray
+
+
+
+}
+
 module.exports = {
-    getData
+    getData,
+    getBetweenData
 }

@@ -12,7 +12,10 @@ const passport = require('passport')
 const cookieSession = require('cookie-session')
 const keys = require('./config.json');
 const { RequesterBuilder } = require('grpc');
+
 const dataPerDay = require('./cazhly-data-per-day/data-per-day.controller')
+const notifications = require('./notifications/notifications.controller')
+
 require('./users/oauth-user.model')
 require('./users/user.service')
 
@@ -52,17 +55,20 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //user related operations  routes
 app.use('/user', require('./users/users.controller'));
 
-//Data added per day route
+//Route for data handling
 app.use('/today', dataPerDay)
 
-//product related operations  routes
-app.use('/product', require('./product/product.controller'));
+// Route for notifictions handling
+app.use('/notifications', notifications)
 
-//category related operations  routes
-app.use('/category', require('./categories/product_category.controller'));
+// //product related operations  routes
+// app.use('/product', require('./product/product.controller'));
 
-//borrow related operations  routes
-app.use('/borrow_sell', require('./borrow_sell/borrow_sell.controller'));
+// //category related operations  routes
+// app.use('/category', require('./categories/product_category.controller'));
+
+// //borrow related operations  routes
+// app.use('/borrow_sell', require('./borrow_sell/borrow_sell.controller'));
 
 
 //if no routes define return render html file (index.hmtl

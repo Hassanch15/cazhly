@@ -4,6 +4,7 @@ const userService = require('./user.service');
 const {fileIsValid} = require('util/FileUtils');
 const {verifyToken} = require('util/AuthToken');
 const {validateField} = require('util/TextUtils');
+const UserModel = require('./user.model')
 
 // routes
 //***************************************************************
@@ -14,12 +15,6 @@ router.put('/update', verifyToken, update);
 router.delete('/delete', verifyToken, _delete);
 router.post('/login', loginUser);
 //***************************************************************
-
-
-//***************************************************************
-module.exports = router;
-//***************************************************************
-
 
 //***************************************************************
 function register(req, res, next)
@@ -130,3 +125,32 @@ function _delete(req, res, next)
         .then(() => res.json({"message": "User deleted"}))
         .catch(err => next(err));
 }
+
+router.patch('/currency/:uid',verifyToken, async (req, res) => {
+
+    const updates = Object.keys(req.body)
+    const allowedUpdates = ['symbol','code','country']
+    const isAllowed = updates.every( update => allowedUpdates.includes(update))
+
+    if(!isAllowed){
+        return res.status(400).send({error: 'Invalid Update!'})
+    }
+
+    try{
+        const newData = await UserModel.findOneAndUpdate({uid:req.params.uid}, req.body, {new: true, runValidators: true})
+        if(!newData){
+            return res.status(404).send({error: "Profile not found for update!!"})
+        }
+
+        await newData.save()
+        res.send(newData)
+    }
+    catch(e) {
+        res.status(400).send(e)
+    }
+})
+
+
+//***************************************************************
+module.exports = router;
+//***************************************************************

@@ -8,7 +8,10 @@ const schema = new Schema({
     username: {type: String, required: true, trim: true, maxlength : 15},
     password: {type: String, required: true, minlength : 8},
     email: {type: String, unique: true, required: true},
-    profile_image: {type: String, required: false}
+    profile_image: {type: String, required: false},
+    symbol: {type: String},
+    code: {type: String},
+    country: {type: String}
 });
 //***************************************************************
 

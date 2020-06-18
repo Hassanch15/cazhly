@@ -35,4 +35,18 @@ router.get('/get_data', verifyToken, async (req, res) => {
     
 })
 
+router.get('/get_between', verifyToken, async (req, res) => {
+    const firstDate = req.body.firstDate
+    const lastDate = req.body.lastDate
+
+    const newData = await DataService.getBetweenData(firstDate, lastDate)
+
+    try{
+        res.status(200).send(newData)
+    }
+    catch(e){
+        res.status(400).send(e.message)
+    }
+})
+
 module.exports = router

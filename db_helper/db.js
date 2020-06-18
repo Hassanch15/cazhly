@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 mongoose.connect(process.env.MONGODB_URI || config.connectionString, {
     useCreateIndex: true,
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false 
 });
 mongoose.Promise = global.Promise;
 

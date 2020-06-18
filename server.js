@@ -12,12 +12,14 @@ const passport = require('passport')
 const cookieSession = require('cookie-session')
 const keys = require('./config.json');
 const { RequesterBuilder } = require('grpc');
+const dataPerDay = require('./cazhly-data-per-day/data-per-day.controller')
 require('./users/oauth-user.model')
 require('./users/user.service')
 
 //use to render static content like (html/images/files etc) .these files should be in public folder
 
 app.use(bodyParser.json())
+app.use(express.json())
 
 //use cookie sessions
 app.use(cookieSession({
@@ -49,6 +51,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //user related operations  routes
 app.use('/user', require('./users/users.controller'));
+
+//Data added per day route
+app.use('/today', dataPerDay)
 
 //product related operations  routes
 app.use('/product', require('./product/product.controller'));

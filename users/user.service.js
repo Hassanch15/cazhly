@@ -199,6 +199,8 @@ passport.use(new GoogleStrategy({
     (accessToken, refreshToken, profile, done) => {
 
         OauhtUser.findOne({ uid: profile.id }).then((user) => {
+            const token = tokenAccess(user)
+
             if (user) {
                 return done(null, user)
             }
@@ -228,9 +230,31 @@ passport.use(new FacebookStrategy(
         clientID: clientIds.auth.facebookAuth.clientID,
         clientSecret: clientIds.auth.facebookAuth.clientSecret,
         callbackURL: "http://localhost:3000/auth/facebook/callback/",
-        profileFields: ['gender']
+        profileFields: ['id', 'displayName', 'photos', 'email']
     }, 
     (accessToken, refreshToken, profile, done) => {
-        console.log(profile)
+
+        OauhtUser.findOne({ uid: profile.id }).then((user) => {
+
+            if (user) {
+                return done(null, user)
+            }
+
+            user = new OauhtUser({
+                uid: profile.id,
+                username: profile.displayName,
+                email: profile.emails[0].value,
+                profile_image: profile.photos[0].value
+            })
+
+            user.save()
+            return done(null, user)
+
+        })
+
+        console.log(profile.photos[0].value)
+        console.log(profile.id)
+        console.log(profile.displayName)
+        console.log(profile.emails[0].value)
     }
 ))

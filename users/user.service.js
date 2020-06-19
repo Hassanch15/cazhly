@@ -213,11 +213,6 @@ passport.use(new GoogleStrategy({
             return done(null, user)
 
         })
-
-        console.log(profile.photos[0].value)
-        console.log(profile.id)
-        console.log(profile.displayName)
-        console.log(profile.emails[0].value)
     }
 ))
 
@@ -226,7 +221,7 @@ passport.use(new FacebookStrategy(
     {
         clientID: clientIds.auth.facebookAuth.clientID,
         clientSecret: clientIds.auth.facebookAuth.clientSecret,
-        callbackURL: "http://localhost:3000/auth/facebook/callback/",
+        callbackURL: "http://localhost:3000/auth/facebook/callback" || "https://testapi-fantech.herokuapp.com/auth/facebook/callback",
         profileFields: ['id', 'displayName', 'photos', 'email']
     }, 
     (accessToken, refreshToken, profile, done) => {
@@ -248,10 +243,5 @@ passport.use(new FacebookStrategy(
             return done(null, user)
 
         })
-
-        console.log(profile.photos[0].value)
-        console.log(profile.id)
-        console.log(profile.displayName)
-        console.log(profile.emails[0].value)
     }
 ))

@@ -21,7 +21,7 @@ const getData = async (date) => {
     totalCash = totalCashAmount + totalCreditCardAmount
 
     const newData = {
-        givenDate,
+        "date": givenDate.toString(),
         "hours": totalHours,
         "cashAmount": totalCashAmount,
         "creditCardAmount": totalCreditCardAmount,

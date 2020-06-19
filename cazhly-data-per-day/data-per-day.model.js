@@ -12,7 +12,7 @@ const data = new Schema({
     //     ref : 'User'
     // }
 
-})
+}, {timestamps:true})
 
 data.methods.toJSON = function(){
 

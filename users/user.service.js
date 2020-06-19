@@ -81,11 +81,8 @@ async function create(userParam, file)
         fileName = "public/uploads/users/" + userParam.uid + extension;
         url = "/uploads/users/" + userParam.uid + extension;
         userParam.profile_image = url;
-        console.log('test1')
     }
     if (await User.findOne({ email: userParam.email })) {
-        console.log("email taken");
-        console.log('test2')
         throw 'Email "' + userParam.email + '" is already taken';
 
     }
@@ -136,7 +133,7 @@ async function update(userParam, file)
     let profile_image;
     let fileName;
     deleteFileIfExist("uploads/users/" + userParam.uid);
-    if (file !== null && file !== undefined) {
+    if (file !== null && file !== undefined)  {
         profile_image = file.profile_image;
         const extension = path.extname(profile_image.name);
         fileName = "public/uploads/users/" + userParam.uid + extension;

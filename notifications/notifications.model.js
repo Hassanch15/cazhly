@@ -6,7 +6,8 @@ const notifications = new Schema({
     title: {type: String, required: true},
     description: {type: String, required: true},
     date: {type: Date, required: true},
-    isNotifyDaily: {type: Boolean, required: true}
+    isNotifyDaily: {type: Boolean, default: true},
+    uid:{type: String, required: true}
 })
 
 notifications.methods.toJSON = function(){

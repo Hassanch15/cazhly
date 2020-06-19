@@ -14,10 +14,10 @@ router.post('/add_data', verifyToken,async (req, res) => {
 
     try {
         await data.save()
-        res.status(202).json({message:'Data added successfully!', data})
+        res.status(201).json({message:'Data added successfully!', data})
     }
     catch (e) {
-        res.status(400).send(e.message)
+        res.status(400).send(e)
     }
 })
 
@@ -27,6 +27,11 @@ router.get('/get_data', verifyToken, async (req, res) => {
    const newData = await DataService.getData(date)
 
     try{
+
+        if(newData === {} || !newData){
+            return res.status(404).send({error: "No data found!"})
+        }
+
         res.status(200).send(newData)
     }
     catch(e) {
@@ -42,6 +47,11 @@ router.get('/get_between', verifyToken, async (req, res) => {
     const newData = await DataService.getBetweenData(firstDate, lastDate)
 
     try{
+
+        if(newData === [] || !newData){
+            return res.status(404).send({error: "No data found!"})
+        }
+
         res.status(200).send(newData)
     }
     catch(e){

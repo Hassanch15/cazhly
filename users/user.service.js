@@ -196,7 +196,6 @@ passport.use(new GoogleStrategy({
     (accessToken, refreshToken, profile, done) => {
 
         OauhtUser.findOne({ uid: profile.id }).then((user) => {
-            const token = tokenAccess(user)
 
             if (user) {
                 return done(null, user)

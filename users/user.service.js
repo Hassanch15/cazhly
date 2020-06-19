@@ -221,7 +221,7 @@ passport.use(new FacebookStrategy(
     {
         clientID: clientIds.auth.facebookAuth.clientID,
         clientSecret: clientIds.auth.facebookAuth.clientSecret,
-        callbackURL: "/auth/facebook/callback",
+        callbackURL: "https://testapi-fantech.herokuapp.com/auth/facebook/callback",
         profileFields: ['id', 'displayName', 'photos', 'email']
     }, 
     (accessToken, refreshToken, profile, done) => {

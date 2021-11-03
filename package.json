@@ -35,7 +35,7 @@
         "passport-google-oauth20": "^2.0.0",
         "random-string": "^0.2.0",
         "rootpath": "^0.1.2",
-        "validator": "^13.1.1"
+        "validator": "^13.7.0"
     },
     "devDependencies": {
         "nodemon": "^1.19.4"
